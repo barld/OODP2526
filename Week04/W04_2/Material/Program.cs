@@ -1,262 +1,182 @@
-﻿/*
- Contents:
-  - Type checking ('is' keyword) (W05.1.1T01)
-  - virtual & override (W05.1.1T02)
-  - Multiple derived classes (W05.1.1T03)
-  - Derived further (W05.1.1T04)
-  - Overriding ToString() (W05.1.1T05)
-  - Safe/unsafe casting (W05.1.1T06)
-  - Access modifiers: public & private (W05.1.1T07-09)
-
- Inheritance hierarchy:
-
-                 Object
-                   |
-             +-----+-----+
-             |           |
-          Vehicle    USSEnterprise
-             |
-     +-------+-------+
-     |               |
-  GasCar        ElectricCar
-     |
-     |
-   Truck
-
-*/
-
-static class Program
+public class Program
 {
-    public static void Main()
+    /*
+                            Object
+                              |
+                        +-----+-----+
+                        |           |
+                     Person        Car
+                        |
+                +-------+-------+
+                |               |
+           Student          Employee
+                                |
+                                |
+                             Manager
+    */
+
+    static void Main2()
     {
-        BaseAndDerived();
-        BaseKeyword();
-        TypeChecking();
-        VirtualAndOverride();
-        MultipleDerivedClasses();
-        DerivedFurther();
-        Overriding_ToString();
-        SafeUnsafeCasting();
-        PublicPrivate();
+        Casting();
+        OverrideToString();
+        OverrideAndVirtual();
+        InheritanceHierarchy();
     }
 
-    public static void BaseAndDerived()
+    public static void Casting()
     {
-        Console.WriteLine("=== Base & derived classes ===");
+        // Student IS a Person
+        Person student = new Student("123456", "Sarah Smith", 27, "525252", 2022);
 
-        //This is a repeat of the end of the last lesson
-        Vehicle newHollandTractor = new("New Holland", "T7.270");
-        Console.WriteLine("Tractor mileage: " + newHollandTractor.GetMileage());
-        newHollandTractor.Drive();
-        Console.WriteLine("Tractor mileage: " + newHollandTractor.GetMileage());
+        // Cannot access student members, only Person members
+        // Console.WriteLine(student.StudentID); //Error
 
-        Console.WriteLine("\nThe derived class 'GasCar' " +
-            "has access to its base class' PUBLIC members:");
-        GasCar porsche911 = new("Porsche", "911 GT3");
-        Console.WriteLine("Porsche mileage: " + porsche911.GetMileage());
-        porsche911.Drive();
-        Console.WriteLine("Porsche mileage: " + porsche911.GetMileage());
-        Console.WriteLine();
-    }
+        // Cast using ()
+        double PI = 3.14;
+        int PI_int = (int)PI;
 
-    public static void BaseKeyword()
-    {
-        Console.WriteLine("\n=== 'base' keyword ===");
+        string ID = ((Student)student).StudentID;
 
-        Console.WriteLine("When creating an instance of a derived class, " +
-            "the base constructor needs to be called as well:\n");
-        Console.WriteLine("public GasCar(string make, string model)" +
-            " : base(make, model)\r\n{\r\n    HasNewSparkPlugs = true;\r\n}");
-        Console.WriteLine();
-    }
+        // Cast using as
+        ID = (student as Student).StudentID;
 
-    public static void TypeChecking()
-    {
-        Console.WriteLine("\n=== Type checking ('is' keyword) ===");
+        // What if it is not possible to cast it? 
+        Person person = new Person("654321", "John Doe");
 
-        List<Vehicle> vehicles = [
-            new Vehicle("New Holland", "T7.270"),
-            new GasCar("Porsche", "911 GT3"),
-        ];
+        // Invalid Cast using () InvalidCastException
+        // Still have autocomplete suggestion!
+        // string noNumber = ((Student) person).StudentID; //InvalidCastException
 
-        foreach (Vehicle vehicle in vehicles)
+        // Invalid Cast using as NullReferenceException
+        // string noEmail = (person as Student).StudentID; //NullReferenceException 
+
+        // Cast using as, store result, check for null
+        Student test = student as Student;
+        if (test != null)
         {
-            Console.WriteLine($"The {vehicle.Make} {vehicle.Model}:");
-            Console.WriteLine(" - has fresh tires: " + vehicle.HasFreshTires);
+            Console.WriteLine(test.StudentID);
+        }
+        // Null-conditional operator ?. (Same as above code)
+        Console.WriteLine(test?.StudentID);
 
-            if (vehicle is GasCar)
+        // The is operator
+        bool testIfStudent = student is Student;
+
+        // is and as in if
+        if (student is Student)
+        {
+            Student st = student as Student;
+            Console.WriteLine(st.StudentID);
+        }
+
+        // pattern matching and is operator
+        if (student is Student asStudent)
+        {
+            Console.WriteLine(asStudent.StudentID);
+        }
+    }
+
+    public static void OverrideToString()
+    {
+        // Student IS A Person
+        Person studentIsPerson = new Student("7473729", "Bill Briggs", 22, "0398176", 2024);
+
+        Person person = new Person("654321", "John Doe");
+
+        // person. Look at what is available
+        // All classes inherit from the Object class
+
+        // A Person is an Object 
+        Object o = new Person("8726353", "Lisa Murphy");
+        // o. (look at what is available)
+
+        // ToString() -> Print name of class
+        // https://learn.microsoft.com/en-us/dotnet/api/system.object.tostring?view=net-8.0
+        // Note the word *virtual* in the method signature
+        Console.WriteLine(person.ToString());
+
+        // ToString() called if you print the object
+        Console.WriteLine(person);
+
+        // Let's make a better ToString in Person
+        Console.WriteLine(person);
+
+        // Let's make a better ToString in Student
+        Student student = new Student("3626181", "Sam Harris", 22, "1234321", 2024);
+        Console.WriteLine(student);
+
+        // Notice that an override really replaces the method, 
+        // even if we store the object in a base container
+        Console.WriteLine(studentIsPerson);
+
+        // Let's look at Car and override ToString there too
+        Car myCar = new Car("Toyota");
+        Console.WriteLine(myCar);
+    }
+
+    public static void OverrideAndVirtual()
+    {
+        Person person = new Person("654321", "John Doe");
+
+        // Let's make ShareID virtual as it may work differently in derived classes
+        Console.WriteLine(person.GetID());
+
+        Student student = new Student("3626181", "Sam Harris", 22, "1234321", 2023);
+
+        // Let's override ShareID in Student
+        Console.WriteLine(student.GetID());
+    }
+
+    public static void InheritanceHierarchy()
+    {
+        /*
+            Let's look at Employee and Manager and add ToString() methods.
+            Then let's create a List of Persons.
+        */
+        List<Person> people = new List<Person>() {
+            new Person("654321", "John Doe", 33),
+            new Student("3626181", "Sam Harris", 22, "1234321", 2022),
+            new Person("873562", "Lisa Murphy", 27),
+            new Employee("987645", "Jane Doe", 22, "121212"),
+            new Manager("121232", "Max Power", 44, "122312", "IT")
+        };
+        foreach (var person in people)
+        {
+            person.IncreaseAge();
+            if (person is Student asStudent)
             {
-                Console.WriteLine(" - is a GasCar");
-                Console.WriteLine("   * has new spark plugs: "
-                    + ((GasCar)vehicle).HasNewSparkPlugs);
+                Console.WriteLine($"Hi, I am a student with ID {asStudent.StudentID}");
             }
-
-            Console.WriteLine();
-        }
-    }
-
-    public static void VirtualAndOverride()
-    {
-        Console.WriteLine("\n=== virtual & override ===");
-        Console.WriteLine("Virtual methods can overridden by derived class.\n");
-
-        List<Vehicle> vehicles = [
-            new Vehicle("New Holland", "T7.270"),
-            new GasCar("Porsche", "911 GT3"),
-        ];
-
-        foreach (Vehicle vehicle in vehicles)
-        {
-            Console.WriteLine($"Driving the {vehicle.Make} {vehicle.Model}...");
-            vehicle.Drive(5);
-            Console.WriteLine("Has fresh tires: " + vehicle.HasFreshTires);
-
-            if (vehicle is GasCar)
-                Console.WriteLine("Has new spark plugs: " + ((GasCar)vehicle).HasNewSparkPlugs);
-
-            Console.WriteLine("\nPerforming maintenance...");
-            vehicle.PerformMaintenance();
-            Console.WriteLine("Has fresh tires: " + vehicle.HasFreshTires);
-
-            if (vehicle is GasCar)
-                Console.WriteLine("Has new spark plugs: " + ((GasCar)vehicle).HasNewSparkPlugs);
-
-            Console.WriteLine();
-        }
-    }
-
-    public static void MultipleDerivedClasses()
-    {
-        Console.WriteLine("\n=== Multiple derived classes ===");
-        Console.WriteLine("A base class can have any number of derived classes:");
-
-        List<Vehicle> vehicles = [
-            new GasCar("Porsche", "911 GT3"),
-            new ElectricCar("Tesla", "Model X", 100),
-        ];
-
-        foreach (var vehicle in vehicles)
-        {
-            Console.WriteLine($"The {vehicle.Make} {vehicle.Model}:");
-            Console.WriteLine(" - has fresh tires: " + vehicle.HasFreshTires);
-            //We can create an object immediately!
-            //This is called pattern matching type casting
-            //(You don't need to remember this.)
-            if (vehicle is GasCar gasCar) //Pattern matching type cast
-                Console.WriteLine(" - has new spark plugs: "
-                    + gasCar.HasNewSparkPlugs);
-            if (vehicle is ElectricCar electricCar)
-                Console.WriteLine(" - has a battery capacity of: "
-                    + electricCar.BatteryCapacity);
-            Console.WriteLine();
-        }
-    }
-
-    public static void DerivedFurther()
-    {
-        Console.WriteLine("\n=== Derived and derived further ===");
-        Console.WriteLine("A derived class can have its own derived classes:");
-        Console.WriteLine();
-
-        List<GasCar> gasCars = [
-            new GasCar("Porsche", "911 GT3"),
-            new Truck("DAF", "XF", 52),
-        ];
-
-        foreach (var gasCar in gasCars)
-        {
-            Console.WriteLine($"The {gasCar.Make} {gasCar.Model}:");
-            Console.WriteLine(" - has fresh tires: " + gasCar.HasFreshTires);
-            Console.WriteLine(" - has new spark plugs: " + gasCar.HasNewSparkPlugs);
-            if (gasCar is Truck truck)
-                Console.WriteLine(" - has a cargo space capacity (m3) of: "
-                    + truck.CargoCapacity);
-
-            Console.WriteLine();
-        }
-    }
-
-    public static void Overriding_ToString()
-    {
-        Console.WriteLine("\n=== Overriding ToString() ===");
-        Console.WriteLine("Each class is ultimately derived" +
-            " from the Object class.");
-        Console.WriteLine("Hence classes can override the " +
-            "Object class' virtual ToString() method.\n");
-
-        List<Vehicle> vehicles = [
-            new Vehicle("New Holland", "T7.270"),
-            new GasCar("Porsche", "911 GT3"),
-            new Truck("DAF", "XF", 52),
-            new ElectricCar("Tesla", "Model X", 100),
-        ];
-
-        foreach (var vehicle in vehicles)
-        {
-            //Printing an object automatically calls ToString()
-            Console.WriteLine(vehicle);
-        }
-
-        Console.WriteLine();
-    }
-
-    public static void SafeUnsafeCasting()
-    {
-        Console.WriteLine("\n=== Safe vs unsafe casting ===");
-        Console.WriteLine("Casting can be done in two ways.");
-
-        List<object> objects = [
-            new Truck("DAF", "XF", 52),
-            new USSEnterprise(),
-        ];
-
-        Console.WriteLine("\nUnsafe casting can cause an InvalidCastException");
-        //NOTE: exception handling is NOT the correct approach.
-        //It is done here merely for demonstration purposes.
-        foreach (var obj in objects)
-        {
-            try
+            else if (person is Employee asEmployee)
             {
-                Console.WriteLine($"Driving the Vehicle...");
-                ((Vehicle)obj).Drive();
+                Console.Write("Employee");
+                if (asEmployee is Manager asManager)
+                {
+                    Console.Write($" Manager of {asManager.Department}");
+                }
+                Console.WriteLine();
             }
-            catch (InvalidCastException ex)
-            {
-                Console.WriteLine($"{obj} is not a Vehicle.");
-                Console.WriteLine(ex); //ToString is automatically called here also
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        foreach (var obj in objects)
-        {
-            Console.WriteLine("\n=== Safe casting can result in a 'null' ===");
-            Vehicle vehicle = obj as Vehicle;
-            if (vehicle != null)
-            {
-                Console.WriteLine($"Driving the Vehicle...");
-                vehicle.Drive();
-            }
+            // Why does this not run? Think of the hierarchy
+            // else if (person is Manager asManager)
+            // {
+            //     Console.Write($" Manager of {asManager.Department}");
+            // }
             else
             {
-                Console.WriteLine($"{obj} is not a Vehicle");
+                Console.WriteLine("Person");
             }
-
-            Console.WriteLine("Alternatively, you can use the null-coalescing operator:");
-            Console.WriteLine($"Driving the Vehicle...");
-            vehicle?.Drive();
+            
+            Console.WriteLine(person);
+            Console.WriteLine(person.GetID());
         }
     }
 
     public static void PublicPrivate()
     {
-        Console.WriteLine("\n=== public & private ===");
-
-        Vehicle newHollandTractor = new("New Holland", "T7.270");
-
-        Console.WriteLine("We cannot access IncreaseMileage nor _mileage," +
-            "from outside class Vehicle, because they are private members.");
-        //newHollandTractor.IncreaseMileage(10)); //Results in an error
-        //Console.WriteLine("Tractor mileage: " + newHollandTractor._mileage); //Results in an error
+        // Let's make Age, SetValidAge() private -> why?
+        Person person = new Person("654321", "John Doe");
+        // person._age = -1; //Error when private
+        // Console.WriteLine(person._age); //Error when private
+        // person.SetValidAge(); // Error
     }
 }
