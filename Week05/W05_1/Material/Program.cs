@@ -1,183 +1,41 @@
-﻿/*
- Contents:
-  * PART 1: access modifiers
-    - private fields & methods (repeat)
-    - protected fields & methods (W05.2.1T01)
-  * PART 2: properties
-    - get (W05.2.1T02)
-    - set; read/write; validation (W05.2.1T03)
-    - auto-implemented & default values (W05.2.1T04)
-    - virtual & override (W05.2.1T05)
-    - access modifiers (W05.2.1T06)
-    - ??? (W05.2.1T07)
-*/
-
-static class Program
+﻿public class Program
 {
-    public static void Main()
+    /* 
+        Access Modifiers
+        https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/access-modifiers 
+
+        Properties
+        https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties 
+
+        When should you use properties vs fields?
+        - DO NOT provide instance fields that are public or protected.
+        - You should provide properties for accessing fields instead of making 
+        them public or protected.
+        Source: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/field
+    */
+
+    static void Main()
     {
-        PrivateMembers(); // Repeat of last week
-        //ProtectedMembers();
-        //PropertyGet();
-        //PropertyReadWrite();
-        //PropertyAuto();
-        //PropertyDefault();
-        //PropertyVirtual();
-        //PropertyAccessMods();
-    }
+        Person p1 = new Person("123456", "Mike Harris", 151);
+        // Console.WriteLine(p1.BSN); //Error
+        // p1.BSN = "error"; // Error
 
-    private static void PrivateMembers()
-    {
-        Console.WriteLine("=== Private fields and methods ===");
+        Console.WriteLine(p1.Name);
+        // p1.Name = "Michael Harris"; // Error
 
-        List<IsoscelesTriangle> shapes = [
-            new IsoscelesTriangle(4.0, 5.0, "Red"),
-            new Pyramid(6.0, 7.0, "Yellow"),
-        ];
+        // Console.WriteLine(p1.Age); //Error
+        // p1.Age = -1; //Error
 
-        foreach (IsoscelesTriangle s in shapes)
-        {
-            //None of the private members can be accessed from outside the class.
-            //The following statements would all cause a runtime error
-            //("is inaccessible due to its protection level")
-            //Console.WriteLine("Base: " + s._base);
-            //Console.WriteLine("Height: " + s._height);
-            //Console.WriteLine("Slant height: " + s._slantHeight);
-            //s.SetSlantHeight();
+        // Console.WriteLine(p1.ID);
 
-            if (s is Pyramid)
-            {
-                //Console.WriteLine("Apex: " + ((Pyramid)s)._apex);
-                //Also look at the GetBase() method of the Pyramid class
-            }
-        }
+        Person p2 = new Person("123456");
 
-        Console.WriteLine("Now we know we can only interact with the class " +
-            "through public members, and not touch the private members.");
-        foreach (IsoscelesTriangle iso in shapes)
-        {
-            iso.SetBase(2.5);
-            iso.SetHeight(3);
+        Console.WriteLine(p1);
+        Console.WriteLine(p2);
 
-            if (iso is Pyramid p)
-            {
-                p.Paint("Blue", "White", "Red", "Orange", "Black");
-            }
-            else if (iso is IsoscelesTriangle i)
-            {
-                i.Paint("Orange");
-            }
+        Employee e1 = new Employee("83838383", "Sarah Smith", -32, "232323");
+        Console.WriteLine(e1);
 
-            Console.WriteLine(iso.ToString() + "\n");
-        }
-    }
-
-    private static void ProtectedMembers()
-    {
-        Console.WriteLine("=== Protected fields and methods ===");
-
-        List<IsoscelesTriangle> shapes = [
-            new IsoscelesTriangle(4.0, 5.0, "Red"),
-            new Pyramid(6.0, 7.0, "Yellow"),
-        ];
-
-        foreach (IsoscelesTriangle s in shapes)
-        {
-            //Much like private members, we cannot access protected members
-            //from here. The following statements would all cause a runtime error:
-            //("is inaccessible due to its protection level")
-            //Console.WriteLine("Color: " + s.Color);
-            //Console.WriteLine("Is valid side: " + Isosceles.IsValidSide(7.5);
-        }
-
-        Console.WriteLine("Protected members can be accessed by derived classes. " +
-            "Look at the Pyramid's SetApex method where IsValid is accessed, " +
-            "and the overloaded Paint method where Color is accessed.\n");
-    }
-
-    private static void PropertyGet()
-    {
-        Console.WriteLine("=== Read-only properties ===");
-        ProductBundle hotdogs = new("Hotdogs", 10, "Tasty hotdogs!", 4);
-
-        Console.WriteLine("Quantity can be read: " + hotdogs.Quantity);
-        Console.WriteLine("Quantity cannot be written to:\n - " +
-            "\"Property or indexer 'ProductBundle.Quantity' cannot be assigned to -- it is read only\"\n");
-        //hotdogs.Quantity = 6; runtime error
-        Console.WriteLine("Read-only properties may be set in the constructor," +
-            "but once the object is constructed, it cannot be changed anymore.\n");
-    }
-
-    private static void PropertyReadWrite()
-    {
-        Console.WriteLine("=== Reading from and writing to properties ===");
-
-        ProductBundle hotdogs = new("Hotdogs", 10, "Tasty hotdogs!", 4);
-        Console.WriteLine("Description is a read/write property:");
-        string oldDescription = hotdogs.Description;
-        hotdogs.Description = "Very tasty hotdogs!";
-        Console.WriteLine($"Description updated " +
-            $"from {oldDescription} to: {hotdogs.Description}\n");
-        Console.WriteLine("Additional logic is used to write to the Description. " +
-            "A backing field is required for this.\n");
-
-        Console.WriteLine("Another example:");
-        Product hotdog = new("Hotdog", 2.5, "Tasty hotdog!");
-        hotdog.Price = -2.5;
-        Console.WriteLine($"Attempted to update Price to -2.5, but must be " +
-            $"at least 0. Therefore Price was set to: {hotdog.Price}\n");
-    }
-
-    private static void PropertyAuto()
-    {
-        Console.WriteLine("=== Auto-implemented properties ===");
-        Console.WriteLine("No additional logic is used to read and write the Name.");
-        Product hotdog = new("Hotdog", 2.5, "Tasty hotdog!");
-        string oldName = hotdog.Name;
-        hotdog.Name = "Frankfurter";
-        Console.WriteLine($"Name updated from {oldName} to: {hotdog.Name}\n");
-    }
-
-    private static void PropertyDefault()
-    {
-        Console.WriteLine("=== Property default values ===");
-        Console.WriteLine("Properties may be given default values:");
-        Product hotdog = new("Hotdog", 2.5);
-        Console.WriteLine($"Description was set to: {hotdog.Description}\n");
-    }
-
-    private static void PropertyVirtual()
-    {
-        Console.WriteLine("\n=== Virtual properties ===");
-        Console.WriteLine("Like virtual methods, virtual properties may be " +
-            "used as-is or overridden by a derived class:");
-        List<Product> products = [
-            new Product("Hotdog", 2.5, "Tasty hotdog!"),
-            new ProductBundle("Hotdogs", 10, "Tasty hotdogs!", 4),
-        ];
-
-        foreach (var product in products)
-        {
-            Console.WriteLine($"{product.Description}");
-        }
-
-        Console.WriteLine();
-    }
-
-    private static void PropertyAccessMods()
-    {
-        Console.WriteLine("=== Property access modifiers ===");
-        Console.WriteLine("The get and the set may have different access modifiers.");
-
-        Product hotdog = new("Hotdog", 2.5, "Tasty hotdog!");
-        ProductBundle hotdogs = new("Hotdogs", 10, "Tasty hotdogs!", 4);
-
-        hotdog.Sell();
-        Console.WriteLine($"Property Sold may be read publically," +
-            $"but only written to from within this and derived classes.");
-        Console.WriteLine($"{hotdog.Name} sold: {hotdog.Sold}");
-        Console.WriteLine("Sold cannot be written to:\n - " +
-            "\"The property or indexer 'Product.Sold' cannot be used in this context because the set accessor is inaccessible.\"\n");
-        //hotdog.Sold = 2; runtime error
+        // Console.WriteLine(e1.ID);
     }
 }
