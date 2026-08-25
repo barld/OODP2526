@@ -94,7 +94,6 @@ public static class W02_1_1_Methods
     // Revision Random class and List PickGreeting
     public static string PickGreeting(List<string> greetings)
     {
-        // Random r = new();
         Random r = new();
         return greetings[r.Next(greetings.Count)];
     }
