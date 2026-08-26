@@ -18,7 +18,7 @@ PART 1
 * Be Careful With Read (optional)
 * Types of errors - compiler errors, warnings, run time errors, logical errors
 
-Training Exercises: W01.1.1T01 - W01.1.1T03
+Class Exercises: W01.1.C01 - W01.1.C03
 
 PART 2
 * String Methods
@@ -31,14 +31,14 @@ PART 2
 * Selection Ternary
 * Selection If / Else / If Else
 
-Training Exercises: W01.1.1T04 - W01.1.1T07
+Class Exercises: W01.1.C04 - W01.1.C07
 
 PART 3
 * Switch Statements and expressions with the constant pattern
 * Grouping cases in switch statements and expressions
 * Switch Statements and expressions with the relational pattern
 
-Training Exercises: W01.1.1T08 - W.01.1.1T09
+Class Exercises: W01.1.C08 - W.01.1.C09
 
 Switch statements:
 https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/selection-statements#the-switch-statement

@@ -1,0 +1,11 @@
+# Revision
+- What is an interface?
+- What is in an interface? 
+- What visibility do interface members have by default? Why?
+- Can an interface have fields?
+- How many interfaces can a class implement?
+- Can you make an instance of an interface?
+- When should you use an interface?
+- When should you use inheritance vs an interface? 
+- What is a static class?
+- Can you make an instance of a static class?
